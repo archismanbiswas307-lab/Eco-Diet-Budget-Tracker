@@ -20,7 +20,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { MOCK_VEGETABLES } from "./lib/constants";
+import { MOCK_VEGETABLES, BUDGET_RESOURCES } from "./lib/constants";
 import { generateDietPlan } from "./lib/gemini";
 import { Transaction, DietPlan, UserProfile, HealthProfile } from "./types";
 import { motion, AnimatePresence } from "motion/react";
@@ -283,6 +283,36 @@ export default function App() {
                     </CardContent>
                   </Card>
                 </div>
+
+                <Card className="border-none shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <ExternalLink className="w-5 h-5 text-emerald-600" />
+                      Budgeting & Shopping Toolkit
+                    </CardTitle>
+                    <CardDescription>Explore other platforms to optimize your spending and savings</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {BUDGET_RESOURCES.map((resource) => (
+                        <div 
+                          key={resource.name} 
+                          className="p-4 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all cursor-pointer group"
+                          onClick={() => window.open(resource.url, '_blank')}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge variant="secondary" className="bg-slate-100 text-slate-600 text-[10px] font-normal">
+                              {resource.category}
+                            </Badge>
+                            <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                          </div>
+                          <h4 className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{resource.name}</h4>
+                          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{resource.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="planner" className="mt-0 space-y-6">

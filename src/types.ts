@@ -32,6 +32,13 @@ export interface DietPlan {
   estimatedMonthlyCost: number;
 }
 
+export interface Resource {
+  name: string;
+  url: string;
+  description: string;
+  category: "Grocery" | "Budgeting" | "Investment" | "Savings";
+}
+
 export interface HealthProfile {
   age: number;
   gender: "male" | "female" | "other";

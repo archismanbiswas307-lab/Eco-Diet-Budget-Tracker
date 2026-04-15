@@ -88,3 +88,42 @@ export const MOCK_VEGETABLES: Vegetable[] = [
     discountPercentage: 12
   },
 ];
+
+export const BUDGET_RESOURCES = [
+  {
+    name: "Blinkit",
+    url: "https://blinkit.com",
+    description: "Quick 10-minute grocery delivery for urgent needs.",
+    category: "Grocery"
+  },
+  {
+    name: "JioMart",
+    url: "https://www.jiomart.com",
+    description: "Great discounts on bulk groceries and household items.",
+    category: "Grocery"
+  },
+  {
+    name: "Zepto",
+    url: "https://www.zeptonow.com",
+    description: "Fast delivery with competitive pricing on fresh produce.",
+    category: "Grocery"
+  },
+  {
+    name: "Paisabazaar",
+    url: "https://www.paisabazaar.com",
+    description: "Compare credit cards, loans, and track credit score.",
+    category: "Budgeting"
+  },
+  {
+    name: "ClearTax",
+    url: "https://cleartax.in",
+    description: "Easy tax filing and investment planning for Indians.",
+    category: "Investment"
+  },
+  {
+    name: "Value Research",
+    url: "https://www.valueresearchonline.com",
+    description: "Best platform for mutual fund research and tracking.",
+    category: "Investment"
+  }
+];
