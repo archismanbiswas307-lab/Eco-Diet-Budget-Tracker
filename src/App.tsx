@@ -118,7 +118,7 @@ export default function App() {
   };
 
   const grocerySpending = transactions
-    .filter(t => t.category.includes("Groceries"))
+    .filter(t => t.category?.includes("Groceries"))
     .reduce((acc, t) => acc + t.amount, 0);
 
   const totalSpending = transactions.reduce((acc, t) => acc + t.amount, 0);
@@ -141,7 +141,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-              Budget: ₹{userProfile.monthlyBudget}
+              Budget: ₹{userProfile.monthlyBudget?.toLocaleString('en-IN')}
             </Badge>
             <Button variant="ghost" size="icon">
               <Settings className="w-5 h-5 text-slate-500" />
@@ -189,7 +189,7 @@ export default function App() {
                   <Card className="border-none shadow-sm">
                     <CardHeader className="pb-2">
                       <CardDescription>Total Spent (MTD)</CardDescription>
-                      <CardTitle className="text-3xl font-bold">₹{totalSpending.toLocaleString('en-IN')}</CardTitle>
+                      <CardTitle className="text-3xl font-bold">₹{totalSpending?.toLocaleString('en-IN')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center text-sm text-slate-500">
@@ -202,7 +202,7 @@ export default function App() {
                   <Card className="border-none shadow-sm">
                     <CardHeader className="pb-2">
                       <CardDescription>Grocery Budget</CardDescription>
-                      <CardTitle className="text-3xl font-bold">₹{grocerySpending.toLocaleString('en-IN')} / ₹8,000</CardTitle>
+                      <CardTitle className="text-3xl font-bold">₹{grocerySpending?.toLocaleString('en-IN')} / ₹8,000</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="w-full bg-slate-100 rounded-full h-2 mt-2">
@@ -270,11 +270,11 @@ export default function App() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {transactions.slice(0, 5).map((t) => (
+                            {transactions?.slice(0, 5).map((t) => (
                               <TableRow key={t.id}>
                                 <TableCell className="text-slate-500">{t.date}</TableCell>
                                 <TableCell className="font-medium">{t.name}</TableCell>
-                                <TableCell className="text-right font-mono">₹{t.amount.toLocaleString('en-IN')}</TableCell>
+                                <TableCell className="text-right font-mono">₹{t.amount?.toLocaleString('en-IN')}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -335,7 +335,7 @@ export default function App() {
                         <label className="text-sm font-medium">Daily Calories</label>
                         <Input 
                           type="number" 
-                          value={userProfile.nutritionalGoals.calories}
+                          value={userProfile.nutritionalGoals?.calories || ""}
                           onChange={(e) => setUserProfile({...userProfile, nutritionalGoals: {...userProfile.nutritionalGoals, calories: Number(e.target.value)}})}
                         />
                       </div>
@@ -375,7 +375,7 @@ export default function App() {
                           <div className="grid grid-cols-2 gap-4">
                             <div className="p-4 bg-slate-50 rounded-xl">
                               <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Est. Monthly Cost</p>
-                              <p className="text-2xl font-bold text-emerald-600">₹{dietPlan.estimatedMonthlyCost.toLocaleString('en-IN')}</p>
+                              <p className="text-2xl font-bold text-emerald-600">₹{dietPlan.estimatedMonthlyCost?.toLocaleString('en-IN')}</p>
                             </div>
                             <div className="p-4 bg-slate-50 rounded-xl">
                               <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Daily Calories</p>
@@ -384,7 +384,7 @@ export default function App() {
                           </div>
                           <div className="space-y-4">
                             <h4 className="font-semibold text-slate-700">Daily Meal Structure</h4>
-                            {dietPlan.meals.map((meal, idx) => (
+                            {dietPlan.meals?.map((meal, idx) => (
                               <div key={idx} className="p-4 border border-slate-100 rounded-xl hover:border-emerald-200 transition-colors">
                                 <div className="flex justify-between items-start">
                                   <div>
@@ -395,7 +395,7 @@ export default function App() {
                                 <div className="mt-4 space-y-2">
                                   <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ingredients & Best Prices</p>
                                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    {meal.ingredients.map((ing, i) => (
+                                    {meal.ingredients?.map((ing, i) => (
                                       <div key={i} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg border border-slate-100">
                                         <div className="flex flex-col">
                                           <span className="text-sm font-medium text-slate-700">{ing.name}</span>
@@ -430,8 +430,8 @@ export default function App() {
                               Lowest Price Shopping List
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {Array.from(new Set(dietPlan.meals.flatMap(m => m.ingredients.map(i => i.name)))).map(name => {
-                                const ingredient = dietPlan.meals.flatMap(m => m.ingredients).find(i => i.name === name);
+                              {Array.from(new Set(dietPlan.meals?.flatMap(m => m.ingredients?.map(i => i.name) || []) || [])).map(name => {
+                                const ingredient = dietPlan.meals?.flatMap(m => m.ingredients || [])?.find(i => i.name === name);
                                 return (
                                   <div key={name} className="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
                                     <div>
@@ -469,7 +469,7 @@ export default function App() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {MOCK_VEGETABLES.map((veg) => (
+                            {MOCK_VEGETABLES?.map((veg) => (
                               <TableRow key={veg.name}>
                                 <TableCell className="font-medium">
                                   <div className="flex flex-col">
@@ -496,7 +496,7 @@ export default function App() {
                                 </TableCell>
                                 <TableCell>
                                   <div className="flex gap-1">
-                                    {veg.season.map(s => (
+                                    {veg.season?.map(s => (
                                       <Badge key={s} variant="outline" className="text-[10px] px-1 py-0">{s}</Badge>
                                     ))}
                                   </div>
@@ -714,21 +714,21 @@ export default function App() {
                     <div className="p-6">
                       <h3 className="font-bold text-slate-900 mb-4">Recent Transactions</h3>
                       <div className="space-y-4">
-                        {transactions.map((t) => (
+                        {transactions?.map((t) => (
                           <div key={t.id} className="flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
                             <div className="flex items-center gap-4">
                               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                t.category.includes("Groceries") ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'
+                                t.category?.includes("Groceries") ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-600'
                               }`}>
-                                {t.category.includes("Groceries") ? <Utensils className="w-5 h-5" /> : <DollarSign className="w-5 h-5" />}
+                                {t.category?.includes("Groceries") ? <Utensils className="w-5 h-5" /> : <DollarSign className="w-5 h-5" />}
                               </div>
                               <div>
                                 <p className="font-bold text-slate-900">{t.name}</p>
-                                <p className="text-xs text-slate-500">{t.date} • {t.category.join(", ")}</p>
+                                <p className="text-xs text-slate-500">{t.date} • {t.category?.join(", ")}</p>
                               </div>
                             </div>
                             <p className={`font-bold font-mono ${t.amount > 0 ? 'text-slate-900' : 'text-emerald-600'}`}>
-                              ₹{t.amount.toLocaleString('en-IN')}
+                              ₹{t.amount?.toLocaleString('en-IN')}
                             </p>
                           </div>
                         ))}
