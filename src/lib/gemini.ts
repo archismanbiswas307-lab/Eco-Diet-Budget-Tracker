@@ -1,6 +1,15 @@
 import { GoogleGenAI, Type, ThinkingLevel } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+// Initialize Gemini AI with API key from environment
+const initializeAI = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error(
+      "GEMINI_API_KEY is not configured. Please add it to your .env file. Get your API key from: https://ai.google.dev"
+    );
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export async function generateDietPlan(
   budget: number,
@@ -9,9 +18,12 @@ export async function generateDietPlan(
   vegetablePrices: any,
   healthProfile?: any
 ) {
-  let healthContext = "";
-  if (healthProfile) {
-    healthContext = `
+  try {
+    const ai = initializeAI();
+
+    let healthContext = "";
+    if (healthProfile) {
+      healthContext = `
     User Health Profile:
     - Age: ${healthProfile.age}
     - Gender: ${healthProfile.gender}
@@ -21,9 +33,9 @@ export async function generateDietPlan(
     - BMI: ${healthProfile.bmi?.toFixed(1)}
     - TDEE: ${healthProfile.tdee?.toFixed(0)} kcal
     `;
-  }
+    }
 
-  const prompt = `Generate a monthly diet plan that minimizes cost while meeting these nutritional goals:
+    const prompt = `Generate a monthly diet plan that minimizes cost while meeting these nutritional goals:
   - Daily Calories: ${goals.calories}
   - Monthly Budget: ₹${budget}
   - Preferences: ${preferences.join(", ")}
@@ -37,45 +49,53 @@ export async function generateDietPlan(
   
   Provide the plan in JSON format with a list of daily meals and estimated monthly cost.`;
 
-  const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: prompt,
-    config: {
-      thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
-      responseMimeType: "application/json",
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          dailyCalories: { type: Type.NUMBER },
-          meals: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                name: { type: Type.STRING },
-                description: { type: Type.STRING },
-                ingredients: {
-                  type: Type.ARRAY,
-                  items: {
-                    type: Type.OBJECT,
-                    properties: {
-                      name: { type: Type.STRING },
-                      amount: { type: Type.STRING },
-                      estimatedCost: { type: Type.NUMBER },
-                      purchaseUrl: { type: Type.STRING },
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompt,
+      config: {
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            dailyCalories: { type: Type.NUMBER },
+            meals: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  name: { type: Type.STRING },
+                  description: { type: Type.STRING },
+                  ingredients: {
+                    type: Type.ARRAY,
+                    items: {
+                      type: Type.OBJECT,
+                      properties: {
+                        name: { type: Type.STRING },
+                        amount: { type: Type.STRING },
+                        estimatedCost: { type: Type.NUMBER },
+                        purchaseUrl: { type: Type.STRING },
+                      },
+                      required: ["name", "amount"],
                     },
-                    required: ["name", "amount"],
                   },
                 },
               },
             },
+            estimatedMonthlyCost: { type: Type.NUMBER },
           },
-          estimatedMonthlyCost: { type: Type.NUMBER },
+          required: ["dailyCalories", "meals", "estimatedMonthlyCost"],
         },
-        required: ["dailyCalories", "meals", "estimatedMonthlyCost"],
       },
-    },
-  });
+    });
 
-  return JSON.parse(response.text);
+    return JSON.parse(response.text);
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(
+        `Failed to generate diet plan: ${error.message}`
+      );
+    }
+    throw error;
+  }
 }
